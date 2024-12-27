@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - ANSIEffect
 public enum ANSIEffect: Int {
     case bold = 1
     case dim
@@ -17,5 +18,12 @@ public enum ANSIEffect: Int {
     
     var offEffect: Int {
         rawValue + 20
+    }
+}
+
+// MARK: - ANSICode
+extension ANSIEffect: ANSICode {
+    public var escapeCode: String {
+        "\(String.OPEN)\(onEffect)\(String.CLOSE_SGR)"
     }
 }
