@@ -3,10 +3,8 @@ import Foundation
 public enum ANSIColor {
     /// Standard 16 Colors
     case standard(color: StandardColor, intensity: StandardIntensity = .standard)
-    
     /// Extended 256 Colors
     case extended(color: UInt8)
-    
     /// RGB Colors
     case rgb(red: UInt8, green: UInt8, blue: UInt8)
 }
@@ -28,19 +26,15 @@ public enum StandardIntensity {
     
     var foreground: Int {
         switch self {
-        case .standard:
-            3
-        case .bright:
-            9
+        case .standard: 3
+        case .bright:   9
         }
     }
     
     var background: Int {
         switch self {
-        case .standard:
-            4
-        case .bright:
-            10
+        case .standard: 4
+        case .bright:   10
         }
     }
 }
