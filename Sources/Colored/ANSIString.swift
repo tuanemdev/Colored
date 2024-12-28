@@ -2,29 +2,30 @@ import Foundation
 
 public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationProtocol, CustomStringConvertible {
     public var content: String
-    var codes: [ANSICode]
+    var codes: [any ANSICode]
     
-    // MARK: - ExpressibleByStringInterpolation
     public init() {
         self.content = ""
         self.codes = []
     }
     
-    public init(content: String, codes: [ANSICode]) {
+    public init(content: String, codes: [any ANSICode]) {
         self.content = content
         self.codes = codes
     }
     
+    // MARK: - ExpressibleByStringInterpolation
     public init(stringLiteral value: String) {
         self.content = value
         self.codes = []
     }
     
     public init(stringInterpolation: Self) {
-        self.content = stringInterpolation.description
-        self.codes = []
+        self.content = stringInterpolation.content
+        self.codes = stringInterpolation.codes
     }
     
+    // MARK: - StringInterpolationProtocol
     public init(literalCapacity: Int, interpolationCount: Int) {
         self.content = ""
         self.codes = []
