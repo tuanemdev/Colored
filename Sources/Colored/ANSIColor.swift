@@ -15,20 +15,40 @@ public enum ColorType {
     case rgb(red: UInt8, green: UInt8, blue: UInt8)
 }
 
+public enum ColorPosition {
+    case foreground
+    case background
+}
+
 public enum StandardColor: Int {
-    case black
-    case red
-    case green
-    case yellow
-    case blue
-    case magenta
-    case cyan
-    case white
+    case black      = 0
+    case red        = 1
+    case green      = 2
+    case yellow     = 3
+    case blue       = 4
+    case magenta    = 5
+    case cyan       = 6
+    case white      = 7
 }
 
 public enum StandardIntensity {
     case standard
     case bright
+    
+    func prefix(_ position: ColorPosition) -> Int {
+        switch self {
+        case .standard:
+            switch position {
+            case .foreground:   3
+            case .background:   4
+            }
+        case .bright:
+            switch position {
+            case .foreground:   9
+            case .background:   10
+            }
+        }
+    }
     
     var foreground: Int {
         switch self {

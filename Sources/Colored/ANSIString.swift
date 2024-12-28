@@ -1,7 +1,7 @@
 import Foundation
 
 public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationProtocol, CustomStringConvertible {
-    public var content: String
+    var content: String
     var codes: [any ANSICode]
     
     public init() {

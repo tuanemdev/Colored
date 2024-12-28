@@ -1,9 +1,6 @@
 import Foundation
 
-/**
- ANSI Escape Codes
- */
-
+/// ANSI Escape Codes
 public protocol ANSICode {
     var escapeCode: String { get }
 }
