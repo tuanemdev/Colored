@@ -13,4 +13,6 @@ extension String {
     static let OPEN_SGR:        String = "["
     static let CLOSE_SGR:       String = "m"
     static let DEFAULT:         String = "0"
+    
+    static let EMPTY:           String = ""
 }

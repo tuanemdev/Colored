@@ -5,7 +5,7 @@ public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationP
     var codes: [any ANSICode]
     
     public init() {
-        self.content = ""
+        self.content = String.EMPTY
         self.codes = []
     }
     
@@ -27,22 +27,31 @@ public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationP
     
     // MARK: - StringInterpolationProtocol
     public init(literalCapacity: Int, interpolationCount: Int) {
-        self.content = ""
+        self.content = String.EMPTY
         self.codes = []
-        content.reserveCapacity(interpolationCount)
+        self.content.reserveCapacity(interpolationCount)
     }
     
     mutating public func appendLiteral(_ literal: String) {
-        content += literal
+        self.content += literal
     }
     
     mutating public func appendInterpolation(_ newContent: Self) {
-        let currentEscapeCode = codes.map(\.escapeCode).joined()
-        self.content += (newContent.description + currentEscapeCode)
+        self.content += newContent.description
     }
     
     // MARK: - CustomStringConvertible
     public var description: String {
-        codes.map(\.escapeCode).joined() + content + String.RESET
+        let escapeCode = codes.map(\.escapeCode).joined()
+        let components = self.content.components(separatedBy: String.RESET)
+        
+        var result = escapeCode
+        components.enumerated().forEach { index, content in
+            result += content + String.RESET
+            let isNeedRepeatEscapeCode = index < (components.count - 1)
+            result += isNeedRepeatEscapeCode ? escapeCode : String.EMPTY
+        }
+        
+        return result
     }
 }

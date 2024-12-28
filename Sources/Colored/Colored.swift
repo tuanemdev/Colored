@@ -8,18 +8,18 @@ public extension String {
     
     // MARK: - Effect
     func effects(_ effects: ANSIEffect...) -> ANSIString {
-        ANSIString(content: self, codes: effects)
+        ANSIString(content: self, codes: effects.reversed())
     }
 }
 
 public extension ANSIString {
     // MARK: - Color
     func colored(_ color: ANSIColor) -> ANSIString {
-        ANSIString(content: self.content, codes: self.codes + [color])
+        ANSIString(content: self.content, codes: [color] + self.codes)
     }
     
     // MARK: - Effect
     func effects(_ effects: ANSIEffect...) -> ANSIString {
-        ANSIString(content: self.content, codes: self.codes + effects)
+        ANSIString(content: self.content, codes: effects.reversed() + self.codes)
     }
 }
