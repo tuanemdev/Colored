@@ -15,11 +15,6 @@ public enum ColorType {
     case rgb(red: UInt8, green: UInt8, blue: UInt8)
 }
 
-public enum ColorPosition {
-    case foreground
-    case background
-}
-
 public enum StandardColor: Int {
     case black      = 0
     case red        = 1
@@ -34,56 +29,74 @@ public enum StandardColor: Int {
 public enum StandardIntensity {
     case standard
     case bright
+}
+
+public enum ColorPosition {
+    case foreground
+    case background
     
-    func prefix(_ position: ColorPosition) -> Int {
-        switch self {
-        case .standard:
-            switch position {
-            case .foreground:   3
-            case .background:   4
+    func prefix(for colorType: ColorType) -> String {
+        switch (self, colorType) {
+        case (.foreground, .standard(_, let intensity)):
+            switch intensity {
+            case .standard:
+                "3"
+            case .bright:
+                "4"
             }
-        case .bright:
-            switch position {
-            case .foreground:   9
-            case .background:   10
+        case (.background, .standard(_, let intensity)):
+            switch intensity {
+            case .standard:
+                "9"
+            case .bright:
+                "10"
             }
+        case (.foreground, .extended):
+            "38;5;"
+        case (.background, .extended):
+            "38;2;"
+        case (.foreground, .rgb):
+            "48;5;"
+        case (.background, .rgb):
+            "48;2;"
         }
-    }
-    
-    var foreground: Int {
-        switch self {
-        case .standard: 3
-        case .bright:   9
-        }
-    }
-    
-    var background: Int {
-        foreground + 1
     }
 }
 
 // MARK: - ANSICode
 extension ANSIColor: ANSICode {
     public var escapeCode: String {
+        String.ESC +
+        String.OPEN_SGR +
+        position.prefix(for: colorType) +
+        styleCode +
+        String.CLOSE_SGR
+    }
+    
+    var position: ColorPosition {
         switch self {
-        case .foreground(let color):
-            switch color {
-            case .standard(color: let color, intensity: let intensity):
-                "\(String.OPEN)\(intensity.foreground)\(color.rawValue)\(String.CLOSE_SGR)"
-            case .extended(color: let color):
-                "\(String.OPEN)38;5;\(color)\(String.CLOSE_SGR)"
-            case .rgb(red: let red, green: let green, blue: let blue):
-                "\(String.OPEN)38;2;\(red);\(green);\(blue)\(String.CLOSE_SGR)"
-            }
-        case .background(let color):
-            switch color {
-            case .standard(color: let color, intensity: let intensity):
-                "\(String.OPEN)\(intensity.background)\(color.rawValue)\(String.CLOSE_SGR)"
-            case .extended(color: let color):
-                "\(String.OPEN)48;5;\(color)\(String.CLOSE_SGR)"
-            case .rgb(red: let red, green: let green, blue: let blue):
-                "\(String.OPEN)48;2;\(red);\(green);\(blue)\(String.CLOSE_SGR)"
-            }
+        case .foreground:
+                .foreground
+        case .background:
+                .background
+        }
+    }
+    
+    var colorType: ColorType {
+        switch self {
+        case .foreground(let colorType), .background(let colorType):
+            colorType
+        }
+    }
+    
+    var styleCode: String {
+        switch colorType {
+        case .standard(let color, _):
+            "\(color.rawValue)"
+        case .extended(let color):
+            "\(color)"
+        case .rgb(let red, let green, let blue):
+            "\(red);\(green);\(blue)"
         }
     }
 }

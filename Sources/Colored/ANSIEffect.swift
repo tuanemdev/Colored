@@ -24,6 +24,6 @@ public enum ANSIEffect: Int {
 // MARK: - ANSICode
 extension ANSIEffect: ANSICode {
     public var escapeCode: String {
-        "\(String.OPEN)\(onEffect)\(String.CLOSE_SGR)"
+        String.ESC + String.OPEN_SGR + String(onEffect) + String.CLOSE_SGR
     }
 }
