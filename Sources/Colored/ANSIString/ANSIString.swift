@@ -1,11 +1,11 @@
 import Foundation
 
-public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationProtocol, CustomStringConvertible {
+public struct ANSIString {
     var content: String
     var codes: [any ANSICode]
     
     public init() {
-        self.content = String.EMPTY
+        self.content = ""
         self.codes = []
     }
     
@@ -13,8 +13,10 @@ public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationP
         self.content = content
         self.codes = codes
     }
-    
-    // MARK: - ExpressibleByStringInterpolation
+}
+
+// MARK: - ExpressibleByStringInterpolation
+extension ANSIString: ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.content = value
         self.codes = []
@@ -24,10 +26,12 @@ public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationP
         self.content = stringInterpolation.content
         self.codes = stringInterpolation.codes
     }
-    
-    // MARK: - StringInterpolationProtocol
+}
+
+// MARK: - StringInterpolationProtocol
+extension ANSIString: StringInterpolationProtocol {
     public init(literalCapacity: Int, interpolationCount: Int) {
-        self.content = String.EMPTY
+        self.content = ""
         self.codes = []
         self.content.reserveCapacity(interpolationCount)
     }
@@ -39,17 +43,19 @@ public struct ANSIString: ExpressibleByStringInterpolation, StringInterpolationP
     mutating public func appendInterpolation(_ newContent: Self) {
         self.content += newContent.description
     }
-    
-    // MARK: - CustomStringConvertible
+}
+
+// MARK: - CustomStringConvertible
+extension ANSIString: CustomStringConvertible {
     public var description: String {
         let escapeCode = codes.map(\.escapeCode).joined()
-        let components = self.content.components(separatedBy: String.RESET)
+        let components = self.content.components(separatedBy: ANSIReset.shared.escapeCode)
         
         var result = escapeCode
         components.enumerated().forEach { index, content in
-            result += content + String.RESET
+            result += content + ANSIReset.shared.escapeCode
             let isNeedRepeatEscapeCode = index < (components.count - 1)
-            result += isNeedRepeatEscapeCode ? escapeCode : String.EMPTY
+            result += isNeedRepeatEscapeCode ? escapeCode : ""
         }
         
         return result
